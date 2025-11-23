@@ -1,0 +1,59 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Định nghĩa gradient cho hiệu ứng hiện đại -->
+  <defs>
+    <!-- Gradient màu xanh lá -->
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FF88;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00AA55;stop-opacity:1" />
+    </linearGradient>
+    <!-- Gradient màu đỏ -->
+    <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#CC0000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Phần logo Robot (đã được di chuyển lên trên và thu nhỏ) -->
+  <g id="robot-logo" transform="translate(75, 30)">
+    <!-- Đầu robot -->
+    <rect x="0" y="0" width="50" height="40" rx="5" ry="5" fill="url(#greenGradient)" stroke="#00AA55" stroke-width="1.5"/>
+    
+    <!-- Mắt robot -->
+    <circle cx="15" cy="15" r="6" fill="#FFFFFF"/>
+    <circle cx="35" cy="15" r="6" fill="#FFFFFF"/>
+    <circle cx="15" cy="15" r="3" fill="#00AA55"/>
+    <circle cx="35" cy="15" r="3" fill="#00AA55"/>
+    
+    <!-- Miệng (hiển thị dạng thanh) -->
+    <rect x="10" y="28" width="30" height="4" rx="2" fill="#00AA55"/>
+    
+    <!-- Cổ robot -->
+    <rect x="20" y="38" width="10" height="8" fill="url(#greenGradient)"/>
+    
+    <!-- Thân robot -->
+    <rect x="5" y="44" width="40" height="35" rx="3" ry="3" fill="url(#redGradient)" stroke="#CC0000" stroke-width="1.5"/>
+    
+    <!-- Chi tiết trên thân -->
+    <rect x="10" y="50" width="10" height="10" rx="2" fill="#FFFFFF" opacity="0.7"/>
+    <rect x="25" y="50" width="20" height="5" rx="2" fill="#FFFFFF" opacity="0.7"/>
+    <rect x="25" y="58" width="20" height="5" rx="2" fill="#FFFFFF" opacity="0.7"/>
+    
+    <!-- Tay robot -->
+    <rect x="-5" y="48" width="8" height="20" rx="4" fill="url(#greenGradient)"/>
+    <rect x="47" y="48" width="8" height="20" rx="4" fill="url(#greenGradient)"/>
+  </g>
+
+  <!-- Phần Text "RPA Warriors" (đã được di chuyển xuống dưới và thu nhỏ) -->
+  <g id="logo-text" transform="translate(100, 150)">
+    <!-- Text "RPA" với màu xanh lá -->
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="url(#greenGradient)" text-anchor="middle">
+      RPA
+    </text>
+    
+    <!-- Text "Warriors" với màu đỏ -->
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="url(#redGradient)" text-anchor="middle">
+      Warriors
+    </text>
+  </g>
+
+</svg>
