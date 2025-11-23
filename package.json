@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-uipath-orchestrator",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "n8n node for UiPath Orchestrator API",
   "keywords": [
     "n8n-community-node-package",
@@ -9,11 +9,11 @@
     "rpa"
   ],
   "license": "MIT",
-  "author": "Your Name <your.email@example.com>",
-  "homepage": "N\\A",
+  "author": "gemvn90",
+  "homepage": "https://github.com/gemvn90/n8n-nodes-uipath-orchestrator",
   "repository": {
     "type": "git",
-    "url": "N\\A"
+    "url": "https://github.com/gemvn90/n8n-nodes-uipath-orchestrator.git"
   },
   "engines": {
     "node": ">=18.0.0"
