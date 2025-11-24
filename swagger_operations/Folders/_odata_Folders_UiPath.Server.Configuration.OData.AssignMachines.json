@@ -1,0 +1,53 @@
+{
+  "path": "/odata/Folders/UiPath.Server.Configuration.OData.AssignMachines",
+  "operations": {
+    "post": {
+      "tags": [
+        "Folders"
+      ],
+      "summary": "Assigns one or more machines to a set of folders.",
+      "description": "OAuth required scopes: OR.Folders or OR.Folders.Write.\r\n\r\nRequired permissions: (Units.Edit or SubFolders.Edit - Assigns machines to any folder or only if user has SubFolders.Edit permission on all folders provided).",
+      "operationId": "Folders_AssignMachines",
+      "consumes": [
+        "application/json;odata.metadata=minimal;odata.streaming=true",
+        "application/json;odata.metadata=minimal;odata.streaming=false",
+        "application/json;odata.metadata=minimal",
+        "application/json;odata.metadata=full;odata.streaming=true",
+        "application/json;odata.metadata=full;odata.streaming=false",
+        "application/json;odata.metadata=full",
+        "application/json;odata.metadata=none;odata.streaming=true",
+        "application/json;odata.metadata=none;odata.streaming=false",
+        "application/json;odata.metadata=none",
+        "application/json;odata.streaming=true",
+        "application/json;odata.streaming=false",
+        "application/json",
+        "application/json-patch+json",
+        "application/*+json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "description": "",
+          "schema": {
+            "$ref": "#/definitions/FolderAssignMachinesRequest"
+          }
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Success"
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Folders"
+}

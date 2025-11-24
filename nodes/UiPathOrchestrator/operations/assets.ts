@@ -93,16 +93,28 @@ export async function executeAssetsOperations(
 
 	// GetFiltered (recommended) - OData function
 	else if (operation === 'getFiltered') {
+		const expand = this.getNodeParameter('expand', i) as string;
 		const filter = this.getNodeParameter('filter', i) as string;
 		const select = this.getNodeParameter('select', i) as string;
+		const orderby = this.getNodeParameter('orderby', i) as string;
 		const top = this.getNodeParameter('top', i) as number;
 		const skip = this.getNodeParameter('skipFiltered', i) as number;
+		const count = this.getNodeParameter('count', i) as boolean;
 		let url = '/odata/Assets/UiPath.Server.Configuration.OData.GetFiltered';
 		const queryParams: string[] = [];
 		if (filter) queryParams.push(`$filter=${encodeURIComponent(filter)}`);
 		if (select) queryParams.push(`$select=${select}`);
 		if (top && top > 0) queryParams.push(`$top=${Math.min(top, 1000)}`);
+		if (expand) {
+			const expandDepth = expand.split(',').length;
+			if (expandDepth > 2) {
+				throw new NodeOperationError(this.getNode(), 'Expand cannot have depth greater than 2');
+			}
+			queryParams.push(`$expand=${expand}`);
+		}
+		if (orderby) queryParams.push(`$orderby=${orderby}`);
 		if (skip && skip > 0) queryParams.push(`$skip=${skip}`);
+		if (count) queryParams.push(`$count=true`);
 		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
 		responseData = responseData.value || responseData;
@@ -112,23 +124,33 @@ export async function executeAssetsOperations(
 	else if (operation === 'getAssetsAcrossFolders') {
 		const excludeFolderId = this.getNodeParameter('excludeFolderId', i) as string;
 		const filter = this.getNodeParameter('filter', i) as string;
+		const expand = this.getNodeParameter('expand', i) as string;
 		const select = this.getNodeParameter('select', i) as string;
 		const orderby = this.getNodeParameter('orderby', i) as string;
 		const top = this.getNodeParameter('top', i) as number;
 		const skip = this.getNodeParameter('skip', i) as number;
 		const count = this.getNodeParameter('count', i) as boolean;
+		const organizationUnitId = this.getNodeParameter('organizationUnitId', i) as number;
 
 		let url = '/odata/Assets/UiPath.Server.Configuration.OData.GetAssetsAcrossFolders';
 		const queryParams: string[] = [];
 		if (excludeFolderId) queryParams.push(`excludeFolderId=${encodeURIComponent(excludeFolderId)}`);
 		if (filter) queryParams.push(`$filter=${encodeURIComponent(filter)}`);
 		if (select) queryParams.push(`$select=${select}`);
+		if (expand) {
+			const expandDepth = expand.split(',').length;
+			if (expandDepth > 2) {
+				throw new NodeOperationError(this.getNode(), 'Expand cannot have depth greater than 2');
+			}
+			queryParams.push(`$expand=${expand}`);
+		}
 		if (orderby) queryParams.push(`$orderby=${orderby}`);
 		if (top && top > 0) queryParams.push(`$top=${Math.min(top, 1000)}`);
 		if (skip && skip > 0) queryParams.push(`$skip=${skip}`);
 		if (count) queryParams.push(`$count=true`);
 		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
-		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		const headers = organizationUnitId ? { 'X-UIPATH-OrganizationUnitId': organizationUnitId } : {};
+		responseData = await uiPathApiRequest.call(this, 'GET', url, {}, headers);
 		responseData = responseData.value || responseData;
 	}
 

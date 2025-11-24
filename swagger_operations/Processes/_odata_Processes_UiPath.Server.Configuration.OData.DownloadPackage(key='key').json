@@ -1,0 +1,47 @@
+{
+  "path": "/odata/Processes/UiPath.Server.Configuration.OData.DownloadPackage(key='{key}')",
+  "operations": {
+    "get": {
+      "tags": [
+        "Processes"
+      ],
+      "summary": "Downloads the .nupkg file of a Package.",
+      "description": "OAuth required scopes: OR.Execution or OR.Execution.Read.\r\n\r\nRequired permissions: (Packages.View - Downloads a package from a Tenant Feed) and (FolderPackages.View - Downloads a package from a Folder Feed).",
+      "operationId": "Processes_DownloadPackageByKey",
+      "produces": [
+        "application/octet-stream"
+      ],
+      "parameters": [
+        {
+          "in": "path",
+          "name": "key",
+          "description": "",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "feedId",
+          "description": "",
+          "type": "string",
+          "format": "uuid"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "format": "file",
+            "type": "file"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Processes"
+}

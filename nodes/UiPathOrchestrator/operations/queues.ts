@@ -54,8 +54,9 @@ export async function executeQueuesOperations(
 			this,
 			'POST',
 			'/odata/Queues/UiPathODataSvc.AddQueueItem',
-			body,
+			body
 		);
+		responseData = responseData.value[0]; // Extract first item from OData array
 	} else if (operation === 'bulkAddQueueItems') {
 		const queueName = this.getNodeParameter('queueName', i) as string;
 		const bulkItemsStr = this.getNodeParameter('bulkItemsJson', i) as string;

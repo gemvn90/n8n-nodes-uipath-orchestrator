@@ -1,0 +1,128 @@
+{
+  "path": "/odata/Processes/UiPath.Server.Configuration.OData.UploadPackage",
+  "operations": {
+    "post": {
+      "tags": [
+        "Processes"
+      ],
+      "summary": "Uploads a new package or a new version of an existing package. The content of the package is sent as a .nupkg file embedded in the HTTP request.",
+      "description": "OAuth required scopes: OR.Execution or OR.Execution.Write.\r\n\r\nRequired permissions: (Packages.Create - Uploads a package in a Tenant Feed) and (FolderPackages.Create - Uploads a package in a Folder Feed).",
+      "operationId": "Processes_UploadPackage",
+      "consumes": [
+        "multipart/form-data"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "feedId",
+          "type": "string",
+          "format": "uuid"
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$filter",
+          "description": "Restricts the set of items returned. The maximum number of expressions is 100.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$orderby",
+          "description": "Specifies the order in which items are returned. The maximum number of expressions is 5.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$count",
+          "description": "Indicates whether the total count of items within a collection are returned in the result.",
+          "type": "boolean"
+        },
+        {
+          "in": "formData",
+          "name": "file1",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file2",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file3",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file4",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file5",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file6",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file7",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file8",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file9",
+          "type": "file"
+        },
+        {
+          "in": "formData",
+          "name": "file",
+          "required": true,
+          "type": "file"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/ODataValueOfIEnumerableOfBulkItemDtoOfString"
+          }
+        },
+        "207": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/ODataValueOfIEnumerableOfBulkItemDtoOfString"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Processes"
+}

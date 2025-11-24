@@ -11,13 +11,13 @@ export async function executeProcessesOperations(
 	if (operation === 'deletePackage') {
 		const processKey = this.getNodeParameter('processKeyDelete', i) as string;
 		const feedId = this.getNodeParameter('feedIdDelete', i) as string;
-		let url = `/odata/Processes('${processKey}')`;
+		let url = `/odata/Releases('${processKey}')`;
 		if (feedId) url += `?feedId=${feedId}`;
 		responseData = await uiPathApiRequest.call(this, 'DELETE', url);
 	} else if (operation === 'downloadPackage') {
 		const processKey = this.getNodeParameter('processKey', i) as string;
 		const feedId = this.getNodeParameter('feedId', i) as string;
-		let url = `/odata/Processes/UiPath.Server.Configuration.OData.DownloadPackage(key='${processKey}')`;
+		let url = `/odata/Packages/UiPath.Server.Configuration.OData.DownloadPackage(key='${processKey}')`;
 		if (feedId) url += `?feedId=${feedId}`;
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
 	} else if (operation === 'getAll') {
@@ -26,14 +26,14 @@ export async function executeProcessesOperations(
 		responseData = await uiPathApiRequest.call(
 			this,
 			'GET',
-			`/odata/Processes?$top=${Math.min(take || 20, 1000)}&$skip=${skip || 0}`,
+			`/odata/Releases?$top=${Math.min(take || 20, 1000)}&$skip=${skip || 0}`,
 		);
 		responseData = responseData.value;
 	} else if (operation === 'getArguments') {
 		const processKey = this.getNodeParameter('processKeyArgs', i) as string;
 		const expand = this.getNodeParameter('expandArgs', i) as string;
 		const select = this.getNodeParameter('selectArgs', i) as string;
-		let url = `/odata/Processes/UiPath.Server.Configuration.OData.GetArguments(key='${processKey}')`;
+		let url = `/odata/Releases/UiPath.Server.Configuration.OData.GetArguments(key='${processKey}')`;
 		const queryParams = [];
 		if (expand) queryParams.push(`$expand=${expand}`);
 		if (select) queryParams.push(`$select=${select}`);
@@ -50,7 +50,7 @@ export async function executeProcessesOperations(
 		const skip = this.getNodeParameter('skipVersions', i) as number;
 		const count = this.getNodeParameter('countVersions', i) as boolean;
 
-		let url = `/odata/Processes/UiPath.Server.Configuration.OData.GetProcessVersions(processId='${processId}')`;
+		let url = `/odata/Releases/UiPath.Server.Configuration.OData.GetProcessVersions(processId='${processId}')`;
 		const queryParams = [];
 		if (feedId) queryParams.push(`feedId=${feedId}`);
 		if (expand) queryParams.push(`$expand=${expand}`);
@@ -71,7 +71,7 @@ export async function executeProcessesOperations(
 		const orderby = this.getNodeParameter('orderbyUpload', i) as string;
 		const count = this.getNodeParameter('countUpload', i) as boolean;
 
-		let url = `/odata/Processes/UiPath.Server.Configuration.OData.UploadPackage`;
+		let url = `/odata/Packages/UiPath.Server.Configuration.OData.UploadPackage`;
 		const queryParams = [];
 		if (feedId) queryParams.push(`feedId=${feedId}`);
 		if (expand) queryParams.push(`$expand=${expand}`);

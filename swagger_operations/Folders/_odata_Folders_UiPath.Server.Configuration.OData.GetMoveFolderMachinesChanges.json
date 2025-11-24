@@ -1,0 +1,76 @@
+{
+  "path": "/odata/Folders/UiPath.Server.Configuration.OData.GetMoveFolderMachinesChanges",
+  "operations": {
+    "get": {
+      "tags": [
+        "Folders"
+      ],
+      "summary": "Gets the machine changes when moving a folder",
+      "description": "OAuth required scopes: OR.Folders or OR.Folders.Read.\r\n\r\nRequired permissions: (SubFolders.Delete - Deletes folder only if user has SubFolders.Delete permission on it) and (Units.Create or SubFolders.Create - Creates root or subfolder or only subfolder if user has SubFolders.Create permission on parent) and (Units.Edit or SubFolders.Edit - Edits any folder or only if user has SubFolders.Edit permission on it).",
+      "operationId": "Folders_GetMoveFolderMachinesChanges",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "folderId",
+          "description": "Id of the folder to be moved",
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "in": "query",
+          "name": "targetParentId",
+          "description": "Id of the target parent",
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$filter",
+          "description": "Restricts the set of items returned. The maximum number of expressions is 100.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$orderby",
+          "description": "Specifies the order in which items are returned. The maximum number of expressions is 5.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$count",
+          "description": "Indicates whether the total count of items within a collection are returned in the result.",
+          "type": "boolean"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/ODataValueOfIEnumerableOfMoveFolderMachineChange"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Folders"
+}

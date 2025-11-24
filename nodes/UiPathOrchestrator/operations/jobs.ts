@@ -70,12 +70,26 @@ export async function executeJobsOperations(
 		);
 		responseData = responseData.value || responseData;
 	} else if (operation === 'stopJobs') {
-		const jobId = this.getNodeParameter('jobId', i) as number;
+		const jobIdsStr = this.getNodeParameter('jobIds', i) as string;
 		const stopStrategy = this.getNodeParameter('stopStrategy', i) as string;
+		const organizationUnitId = this.getNodeParameter('organizationUnitId', i, 0) as number;
+
+		const jobIds = jobIdsStr
+			.split(',')
+			.map(id => parseInt(id.trim(), 10))
+			.filter(id => !isNaN(id));
+
+		if (jobIds.length === 0) {
+			throw new NodeOperationError(this.getNode(), 'At least one valid Job ID is required');
+		}
 
 		const body = {
-			jobIds: [jobId],
+			jobIds,
 			strategy: stopStrategy,
+		};
+
+		const headers = {
+			'X-UIPATH-OrganizationUnitId': organizationUnitId.toString(),
 		};
 
 		responseData = await uiPathApiRequest.call(
@@ -83,6 +97,7 @@ export async function executeJobsOperations(
 			'POST',
 			'/odata/Jobs/UiPath.Server.Configuration.OData.StopJobs',
 			body,
+			headers,
 		);
 	} else if (operation === 'restartJob') {
 		const jobId = this.getNodeParameter('jobId', i) as number;
@@ -113,15 +128,26 @@ export async function executeJobsOperations(
 	} else if (operation === 'export') {
 		const filter = this.getNodeParameter('filter', i) as string;
 		const orderby = this.getNodeParameter('orderby', i) as string;
+		const expand = this.getNodeParameter('$expand', i) as string;
+		const select = this.getNodeParameter('$select', i) as string;
 
 		let query = '/odata/Jobs/UiPath.Server.Configuration.OData.Export?';
-		if (filter) query += `$filter=${encodeURIComponent(filter)}&`;
-		if (orderby) query += `$orderby=${encodeURIComponent(orderby)}`;
+		const params: string[] = [];
+		if (filter) params.push(`$filter=${encodeURIComponent(filter)}`);
+		if (orderby) params.push(`$orderby=${encodeURIComponent(orderby)}`);
+		if (expand) params.push(`$expand=${encodeURIComponent(expand)}`);
+		if (select) params.push(`$select=${encodeURIComponent(select)}`);
+
+		if (params.length > 0) {
+			query += params.join('&');
+		}
 
 		responseData = await uiPathApiRequest.call(this, 'POST', query);
 	} else if (operation === 'validateJob') {
 		const releaseKey = this.getNodeParameter('releaseKey', i) as string;
 		const inputArgumentsStr = this.getNodeParameter('inputArguments', i) as string;
+		const expand = this.getNodeParameter('$expand', i, '') as string;
+		const select = this.getNodeParameter('$select', i, '') as string;
 
 		let inputArguments = {};
 		try {
@@ -142,12 +168,21 @@ export async function executeJobsOperations(
 			},
 		};
 
+		let url = '/odata/Jobs/UiPath.Server.Configuration.OData.ValidateDynamicJob';
+		const queryParams: string[] = [];
+		if (expand) queryParams.push(`$expand=${encodeURIComponent(expand)}`);
+		if (select) queryParams.push(`$select=${encodeURIComponent(select)}`);
+		if (queryParams.length) {
+			url += `?${queryParams.join('&')}`;
+		}
+
 		responseData = await uiPathApiRequest.call(
 			this,
 			'POST',
-			'/odata/Jobs/UiPath.Server.Configuration.OData.ValidateDynamicJob',
+			url,
 			body,
 		);
+		responseData = responseData.validationResults || responseData;
 	} else if (operation === 'stopJob') {
 		const jobId = this.getNodeParameter('jobId', i) as number;
 		const stopStrategy = this.getNodeParameter('stopStrategy', i) as string;

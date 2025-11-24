@@ -153,6 +153,13 @@ export class UiPathOAuth2 implements ICredentialType {
 			placeholder: 'e.g., OR.Settings OR.Monitoring',
 			default: '',
 		},
+		{
+			displayName: 'Ignore SSL',
+			name: 'ignoreSsl',
+			type: 'boolean',
+			required: false,
+			default: false
+		}
 	];
 
 }

@@ -81,7 +81,7 @@ export async function executeFoldersOperations(
 		);
 	} else if (operation === 'delete') {
 		const key = this.getNodeParameter('key', i) as string;
-		responseData = await uiPathApiRequest.call(this, 'DELETE', `/api/Folders/DeleteByKey?key=${key}`);
+		responseData = await uiPathApiRequest.call(this, 'DELETE', `/odata/Folders(key='${key}')`);
 	} else if (operation === 'get') {
 		const key = this.getNodeParameter('key', i) as string;
 		const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
@@ -99,7 +99,7 @@ export async function executeFoldersOperations(
 		responseData = await uiPathApiRequest.call(
 			this,
 			'GET',
-			`/api/Folders/GetAllForCurrentUser?take=${take || 20}&skip=${skip || 0}`,
+			`/odata/Folders?$top=${take || 20}&$skip=${skip || 0}`,
 		);
 		responseData = responseData.value;
 	} else if (operation === 'getAllRolesForUser') {
@@ -176,7 +176,7 @@ export async function executeFoldersOperations(
 		responseData = await uiPathApiRequest.call(
 			this,
 			'PATCH',
-			'/api/Folders/PatchNameDescription',
+			`/odata/Folders(key='${key}')`,
 			body,
 		);
 	} else if (operation === 'updateMachinesToFolderAssociations') {

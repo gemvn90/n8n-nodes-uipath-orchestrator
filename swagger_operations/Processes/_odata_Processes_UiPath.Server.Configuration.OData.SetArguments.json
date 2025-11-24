@@ -1,0 +1,52 @@
+{
+  "path": "/odata/Processes/UiPath.Server.Configuration.OData.SetArguments",
+  "operations": {
+    "post": {
+      "tags": [
+        "Processes"
+      ],
+      "summary": "Saves process arguments",
+      "description": "OAuth required scopes: OR.Execution or OR.Execution.Write.\r\n\r\nRequired permissions: Packages.Edit.",
+      "operationId": "Processes_SetArguments",
+      "consumes": [
+        "application/json;odata.metadata=minimal;odata.streaming=true",
+        "application/json;odata.metadata=minimal;odata.streaming=false",
+        "application/json;odata.metadata=minimal",
+        "application/json;odata.metadata=full;odata.streaming=true",
+        "application/json;odata.metadata=full;odata.streaming=false",
+        "application/json;odata.metadata=full",
+        "application/json;odata.metadata=none;odata.streaming=true",
+        "application/json;odata.metadata=none;odata.streaming=false",
+        "application/json;odata.metadata=none",
+        "application/json;odata.streaming=true",
+        "application/json;odata.streaming=false",
+        "application/json",
+        "application/json-patch+json",
+        "application/*+json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "schema": {
+            "$ref": "#/definitions/ProcessesSetArgumentsRequest"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success"
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Processes"
+}

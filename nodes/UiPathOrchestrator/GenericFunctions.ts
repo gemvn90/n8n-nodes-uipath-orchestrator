@@ -1,5 +1,5 @@
 import { IDataObject, JsonObject, NodeApiError, NodeOperationError, IExecuteFunctions } from 'n8n-workflow';
-
+import https from 'https';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // Token cache storage (in-memory)
@@ -17,6 +17,7 @@ async function getOAuthToken(
 	scopes?: string,
 	authMode?: string,
 	serverUrl?: string,
+	ignoreSsl?: boolean,
 ): Promise<string> {
 	// Create cache key (include serverUrl/authMode for uniqueness)
 	const cacheKey = `${authMode || tenantName}:${clientId}:${serverUrl || ''}`;
@@ -59,11 +60,19 @@ async function getOAuthToken(
 		.join('&');
 
 	try {
-		const response = await axios.post(tokenUrl, tokenData, {
+		const axiosOptions: AxiosRequestConfig = {
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-		});
+		};
+
+		if (ignoreSsl) {
+			axiosOptions.httpsAgent = new https.Agent({
+				rejectUnauthorized: false,
+			});
+		}
+
+    	const response = await axios.post(tokenUrl, tokenData, axiosOptions);
 
 		const token = response.data.access_token;
 		const expiresIn = response.data.expires_in || 3600; // Default 1 hour
@@ -110,6 +119,7 @@ async function uiPathApiRequest(
 		authMode,
 		serverUrl,
 		_oauthAuthorizationUrl,
+		ignoreSsl,
 	} = credentials as {
 		tenantName: string;
 		accountLogicalName: string;
@@ -123,6 +133,7 @@ async function uiPathApiRequest(
 		authMode?: string;
 		serverUrl?: string;
 		_oauthAuthorizationUrl?: string;
+		ignoreSsl?: boolean;
 	};
 
 	let token: string;
@@ -135,6 +146,7 @@ async function uiPathApiRequest(
 			scopes,
 			authMode,
 			serverUrl,
+			ignoreSsl,
 		);
 	} catch (error) {
 		throw new NodeOperationError(
@@ -149,8 +161,9 @@ async function uiPathApiRequest(
 	if (!baseUrl) {
 		if (authMode === 'onPrem' && serverUrl) {
 			// Default on-prem path when full apiBaseUrl not provided
-			const defaultPath = '/DefaultTenant/orchestrator_';
-			baseUrl = serverUrl.replace(/\/$/, '') + defaultPath;
+			// Default on-prem path when full apiBaseUrl not provided
+			const defaultPath = '/orchestrator';
+			baseUrl = `${serverUrl.replace(/\/$/, '')}${defaultPath}`;
 		} else {
 			// Cloud default path composition
 			const path = `/${accountLogicalName}/${tenantLogicalName}/orchestrator_`;
@@ -189,6 +202,11 @@ async function uiPathApiRequest(
 		axiosConfig.data = option;
 	}
 
+	if (ignoreSsl) {
+    	axiosConfig.httpsAgent = new https.Agent({
+        	rejectUnauthorized: false,
+		});
+	}
 	try {
 		const response: AxiosResponse = await axios(axiosConfig);
 		return response.data;
@@ -224,6 +242,6 @@ async function uiPathApiRequestAllItems(
 	return returnData;
 }
 
-export { uiPathApiRequest, uiPathApiRequestAllItems };
+export { uiPathApiRequest, uiPathApiRequestAllItems, getOAuthToken };
 
 

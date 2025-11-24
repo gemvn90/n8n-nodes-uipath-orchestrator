@@ -1,0 +1,66 @@
+{
+  "path": "/odata/Assets/UiPath.Server.Configuration.OData.ShareToFolders",
+  "operations": {
+    "post": {
+      "tags": [
+        "Assets"
+      ],
+      "summary": "Adds the assets to the folders specified in 'ToAddFolderIds'. Removes the assets from the folders specified in 'ToRemoveFolderIds'.",
+      "description": "OAuth required scopes: OR.Assets or OR.Assets.Write.\r\n\r\nRequires authentication.",
+      "operationId": "Assets_ShareToFolders",
+      "consumes": [
+        "application/json;odata.metadata=minimal;odata.streaming=true",
+        "application/json;odata.metadata=minimal;odata.streaming=false",
+        "application/json;odata.metadata=minimal",
+        "application/json;odata.metadata=full;odata.streaming=true",
+        "application/json;odata.metadata=full;odata.streaming=false",
+        "application/json;odata.metadata=full",
+        "application/json;odata.metadata=none;odata.streaming=true",
+        "application/json;odata.metadata=none;odata.streaming=false",
+        "application/json;odata.metadata=none",
+        "application/json;odata.streaming=true",
+        "application/json;odata.streaming=false",
+        "application/json",
+        "application/json-patch+json",
+        "application/*+json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "description": "Object containing the ids of the assets, the ids of the folders where they should be shared and the ids of the folders from which they should be removed.",
+          "schema": {
+            "$ref": "#/definitions/AssetFoldersShareDto"
+          }
+        },
+        {
+          "in": "header",
+          "name": "X-UIPATH-OrganizationUnitId",
+          "description": "Folder/OrganizationUnit Id",
+          "type": "integer",
+          "format": "int64"
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Success"
+        },
+        "404": {
+          "description": "Asset or one of the folders specified does not exist."
+        },
+        "409": {
+          "description": "Attempt to share between classic or modern or ambigous folders list."
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Assets"
+}

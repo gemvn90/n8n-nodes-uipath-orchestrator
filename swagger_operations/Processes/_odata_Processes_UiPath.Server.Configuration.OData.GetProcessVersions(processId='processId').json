@@ -1,0 +1,90 @@
+{
+  "path": "/odata/Processes/UiPath.Server.Configuration.OData.GetProcessVersions(processId='{processId}')",
+  "operations": {
+    "get": {
+      "tags": [
+        "Processes"
+      ],
+      "summary": "Returns a collection of all available versions of a given process. Allows odata query options.",
+      "description": "OAuth required scopes: OR.Execution or OR.Execution.Read.\r\n\r\nRequired permissions: (Packages.View - Lists versions of a package in a Tenant Feed) and (FolderPackages.View - Lists versions of a package in a Folder Feed).",
+      "operationId": "Processes_GetProcessVersionsByProcessid",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "path",
+          "name": "processId",
+          "description": "The Id of the process for which the versions are fetched.",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "feedId",
+          "description": "",
+          "type": "string",
+          "format": "uuid"
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$filter",
+          "description": "Restricts the set of items returned. The maximum number of expressions is 100.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$orderby",
+          "description": "Specifies the order in which items are returned. The maximum number of expressions is 5.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$top",
+          "description": "Limits the number of items returned from a collection. The maximum value is 1000.",
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "in": "query",
+          "name": "$skip",
+          "description": "Excludes the specified number of items of the queried collection from the result.",
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "in": "query",
+          "name": "$count",
+          "description": "Indicates whether the total count of items within a collection are returned in the result.",
+          "type": "boolean"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/ODataValueOfIEnumerableOfProcessDto"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Processes"
+}

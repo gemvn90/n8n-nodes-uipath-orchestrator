@@ -1,0 +1,72 @@
+{
+  "path": "/odata/Assets/UiPath.Server.Configuration.OData.GetRobotAssetByRobotId(robotId={robotId},assetName='{assetName}')",
+  "operations": {
+    "get": {
+      "tags": [
+        "Assets"
+      ],
+      "summary": "Returns the named asset associated to the given robot Id.",
+      "description": "OAuth required scopes: OR.Assets or OR.Assets.Read.\r\n\r\nRequired permissions: Assets.View.",
+      "operationId": "Assets_GetRobotAssetByRobotId",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "path",
+          "name": "robotId",
+          "description": "The Id of the robot for which the asset is being fetched.",
+          "required": true,
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "in": "path",
+          "name": "assetName",
+          "description": "The name of the asset being fetched.",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "header",
+          "name": "X-UIPATH-OrganizationUnitId",
+          "description": "Folder/OrganizationUnit Id",
+          "type": "integer",
+          "format": "int64"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/RobotAssetDto"
+          }
+        },
+        "400": {
+          "description": "Invalid parameters"
+        },
+        "404": {
+          "description": "Asset or Robot do not exist or the Asset is not available for the specified robot."
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Assets"
+}

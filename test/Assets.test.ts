@@ -105,16 +105,18 @@ describe('Assets Operations', () => {
     expect(result[0]).to.have.property('Name');
   });
 
-  it('should get assets across folders', async () => {
+  it('should get assets across folders with all parameters', async () => {
     context.getNodeParameter = (name: string) => {
       const params: any = {
         excludeFolderId: '0',
         filter: "ValueType eq 'Text'",
+        expand: 'Folder,Robot',
         select: 'Id,Name',
         orderby: 'Name asc',
         top: 10,
         skip: 0,
-        count: false,
+        count: true,
+        organizationUnitId: 123,
       };
       return params[name];
     };
@@ -122,6 +124,9 @@ describe('Assets Operations', () => {
     expect(called.method).to.equal('GET');
     expect(called.url).to.include('/odata/Assets/UiPath.Server.Configuration.OData.GetAssetsAcrossFolders');
     expect(result[0]).to.have.property('Name');
+    expect(called.url).to.include('$expand=Folder,Robot');
+    expect(called.url).to.include('$count=true');
+    expect(called.headers).to.deep.equal({ 'X-UIPATH-OrganizationUnitId': 123 });
   });
 
   it('should get folders for asset', async () => {
@@ -174,7 +179,7 @@ describe('Assets Operations', () => {
       };
       return params[name];
     };
-    const result = await Assets.executeAssetsOperations.call(context, 0, 'getRobotAssetByNameForRobotKey');
+    const _result = await Assets.executeAssetsOperations.call(context, 0, 'getRobotAssetByNameForRobotKey');
     expect(called.method).to.equal('POST');
     expect(called.url).to.include('/odata/Assets/UiPath.Server.Configuration.OData.GetRobotAssetByNameForRobotKey');
     expect(called.body).to.have.property('robotKey');
@@ -187,7 +192,7 @@ describe('Assets Operations', () => {
       };
       return params[name];
     };
-    const result = await Assets.executeAssetsOperations.call(context, 0, 'setRobotAssetByRobotKey');
+    const _result = await Assets.executeAssetsOperations.call(context, 0, 'setRobotAssetByRobotKey');
     expect(called.method).to.equal('POST');
     expect(called.url).to.include('/odata/Assets/UiPath.Server.Configuration.OData.SetRobotAssetByRobotKey');
     expect(called.body).to.have.property('robotKey');
@@ -202,7 +207,7 @@ describe('Assets Operations', () => {
       };
       return params[name];
     };
-    const result = await Assets.executeAssetsOperations.call(context, 0, 'shareToFolders');
+    const _result = await Assets.executeAssetsOperations.call(context, 0, 'shareToFolders');
     expect(called.method).to.equal('POST');
     expect(called.url).to.include('/odata/Assets/UiPath.Server.Configuration.OData.ShareToFolders');
     expect(called.body.AssetIds).to.be.an('array');

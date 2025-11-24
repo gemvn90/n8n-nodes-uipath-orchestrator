@@ -1,0 +1,75 @@
+{
+  "path": "/odata/Jobs/UiPath.Server.Configuration.OData.ResumeJob",
+  "operations": {
+    "post": {
+      "tags": [
+        "Jobs"
+      ],
+      "summary": "Resumes the specified job.",
+      "description": "OAuth required scopes: OR.Jobs or OR.Jobs.Write.\r\n\r\nRequired permissions: Jobs.Edit.",
+      "operationId": "Jobs_ResumeJob",
+      "consumes": [
+        "application/json;odata.metadata=minimal;odata.streaming=true",
+        "application/json;odata.metadata=minimal;odata.streaming=false",
+        "application/json;odata.metadata=minimal",
+        "application/json;odata.metadata=full;odata.streaming=true",
+        "application/json;odata.metadata=full;odata.streaming=false",
+        "application/json;odata.metadata=full",
+        "application/json;odata.metadata=none;odata.streaming=true",
+        "application/json;odata.metadata=none;odata.streaming=false",
+        "application/json;odata.metadata=none",
+        "application/json;odata.streaming=true",
+        "application/json;odata.streaming=false",
+        "application/json",
+        "application/json-patch+json",
+        "application/*+json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "description": "The specified job key.",
+          "schema": {
+            "$ref": "#/definitions/ResumeJobRequest"
+          }
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "header",
+          "name": "X-UIPATH-OrganizationUnitId",
+          "description": "Folder/OrganizationUnit Id",
+          "type": "integer",
+          "format": "int64"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/JobDto"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Jobs"
+}

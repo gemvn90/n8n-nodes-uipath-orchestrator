@@ -1,0 +1,59 @@
+{
+  "path": "/odata/Buckets/UiPath.Server.Configuration.OData.GetFoldersForBucket(id={id})",
+  "operations": {
+    "get": {
+      "tags": [
+        "Buckets"
+      ],
+      "summary": "Get all accessible folders where the bucket is shared, and the total count of folders where it is shared (including unaccessible folders).",
+      "description": "OAuth required scopes: OR.Administration or OR.Administration.Read.\r\n\r\nRequires authentication.",
+      "operationId": "Buckets_GetFoldersForBucketById",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "description": "",
+          "required": true,
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "header",
+          "name": "X-UIPATH-OrganizationUnitId",
+          "description": "Folder/OrganizationUnit Id",
+          "type": "integer",
+          "format": "int64"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/AccessibleFoldersDto"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Buckets"
+}

@@ -1,0 +1,45 @@
+{
+  "path": "/api/DirectoryService/GetDirectoryPermissions",
+  "operations": {
+    "get": {
+      "tags": [
+        "DirectoryService"
+      ],
+      "summary": "Gets directory permissions",
+      "description": "OAuth required scopes: OR.Users or OR.Users.Read.\r\n\r\nRequired permissions: Users.View.",
+      "operationId": "DirectoryService_GetDirectoryPermissions",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "domain",
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/DirectoryPermissionDto"
+            }
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/DirectoryService"
+}

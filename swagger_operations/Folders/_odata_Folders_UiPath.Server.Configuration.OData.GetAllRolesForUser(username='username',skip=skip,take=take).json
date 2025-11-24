@@ -1,0 +1,85 @@
+{
+  "path": "/odata/Folders/UiPath.Server.Configuration.OData.GetAllRolesForUser(username='{username}',skip={skip},take={take})",
+  "operations": {
+    "get": {
+      "tags": [
+        "Folders"
+      ],
+      "summary": "Returns a page of the user-folder assignments for the input user, including the roles for each folder.\r\nThe response also includes the folders assigned to the directory groups of the user.\r\nThe distinction between the folders assigned directly to the user and the ones assigned to one of his groups\r\ncan be made via the User field of the response.\r\nLIMITATION: If URI parameters contain special characters (eg. \\, /), use instead api/FoldersNavigation/GetAllRolesForUser endpoint.",
+      "description": "OAuth required scopes: OR.Folders or OR.Folders.Read.\r\n\r\nRequired permissions: (Units.View or SubFolders.View - Gets roles from all folders or only from folders where user has SubFolders.View permission).",
+      "operationId": "Folders_GetAllRolesForUserByUsernameAndSkipAndTake",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "path",
+          "name": "username",
+          "description": "User name",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "name": "skip",
+          "description": "",
+          "required": true,
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "in": "path",
+          "name": "take",
+          "description": "",
+          "required": true,
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "in": "query",
+          "name": "type",
+          "description": "",
+          "type": "string",
+          "default": "User",
+          "enum": [
+            "User",
+            "Group",
+            "Machine",
+            "Robot",
+            "ExternalApplication"
+          ],
+          "x-ms-enum": {
+            "name": "DirectoryObjectType",
+            "modelAsString": false
+          }
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/UserRoleAssignmentsDto"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Folders"
+}

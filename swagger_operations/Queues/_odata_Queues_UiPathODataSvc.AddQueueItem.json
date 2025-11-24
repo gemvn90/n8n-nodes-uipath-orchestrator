@@ -1,0 +1,75 @@
+{
+  "path": "/odata/Queues/UiPathODataSvc.AddQueueItem",
+  "operations": {
+    "post": {
+      "tags": [
+        "Queues"
+      ],
+      "summary": "Adds a new queue item.",
+      "description": "OAuth required scopes: OR.Queues or OR.Queues.Write.\r\n\r\nRequired permissions: Queues.View and Transactions.Create.",
+      "operationId": "Queues_AddQueueItem",
+      "consumes": [
+        "application/json;odata.metadata=minimal;odata.streaming=true",
+        "application/json;odata.metadata=minimal;odata.streaming=false",
+        "application/json;odata.metadata=minimal",
+        "application/json;odata.metadata=full;odata.streaming=true",
+        "application/json;odata.metadata=full;odata.streaming=false",
+        "application/json;odata.metadata=full",
+        "application/json;odata.metadata=none;odata.streaming=true",
+        "application/json;odata.metadata=none;odata.streaming=false",
+        "application/json;odata.metadata=none",
+        "application/json;odata.streaming=true",
+        "application/json;odata.streaming=false",
+        "application/json",
+        "application/json-patch+json",
+        "application/*+json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "description": "",
+          "schema": {
+            "$ref": "#/definitions/AddQueueItemRequest"
+          }
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "header",
+          "name": "X-UIPATH-OrganizationUnitId",
+          "description": "Folder/OrganizationUnit Id",
+          "type": "integer",
+          "format": "int64"
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/QueueItemDto"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Queues"
+}

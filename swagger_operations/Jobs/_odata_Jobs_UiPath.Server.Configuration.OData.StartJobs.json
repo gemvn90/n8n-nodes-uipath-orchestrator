@@ -1,0 +1,93 @@
+{
+  "path": "/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs",
+  "operations": {
+    "post": {
+      "tags": [
+        "Jobs"
+      ],
+      "summary": "Adds a new job and sets it in Pending state for each robot based on the input parameters and notifies the respective robots about the pending job.",
+      "description": "OAuth required scopes: OR.Jobs or OR.Jobs.Write.\r\n\r\nRequired permissions: Jobs.Create.",
+      "operationId": "Jobs_StartJobs",
+      "consumes": [
+        "application/json;odata.metadata=minimal;odata.streaming=true",
+        "application/json;odata.metadata=minimal;odata.streaming=false",
+        "application/json;odata.metadata=minimal",
+        "application/json;odata.metadata=full;odata.streaming=true",
+        "application/json;odata.metadata=full;odata.streaming=false",
+        "application/json;odata.metadata=full",
+        "application/json;odata.metadata=none;odata.streaming=true",
+        "application/json;odata.metadata=none;odata.streaming=false",
+        "application/json;odata.metadata=none",
+        "application/json;odata.streaming=true",
+        "application/json;odata.streaming=false",
+        "application/json",
+        "application/json-patch+json",
+        "application/*+json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "description": "StartInfo - The information required to register the new jobs.",
+          "schema": {
+            "$ref": "#/definitions/StartJobsRequest"
+          }
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$filter",
+          "description": "Restricts the set of items returned. The maximum number of expressions is 100.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$orderby",
+          "description": "Specifies the order in which items are returned. The maximum number of expressions is 5.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$count",
+          "description": "Indicates whether the total count of items within a collection are returned in the result.",
+          "type": "boolean"
+        },
+        {
+          "in": "header",
+          "name": "X-UIPATH-OrganizationUnitId",
+          "description": "Folder/OrganizationUnit Id",
+          "type": "integer",
+          "format": "int64"
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/ODataValueOfIEnumerableOfJobDto"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Jobs"
+}

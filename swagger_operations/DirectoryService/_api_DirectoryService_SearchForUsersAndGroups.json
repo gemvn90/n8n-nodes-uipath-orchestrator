@@ -1,0 +1,64 @@
+{
+  "path": "/api/DirectoryService/SearchForUsersAndGroups",
+  "operations": {
+    "get": {
+      "tags": [
+        "DirectoryService"
+      ],
+      "summary": "Search users and groups",
+      "description": "OAuth required scopes: OR.Users or OR.Users.Read.\r\n\r\nRequired permissions: Users.View or Units.Edit or SubFolders.Edit.",
+      "operationId": "DirectoryService_SearchForUsersAndGroups",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "searchContext",
+          "description": "",
+          "type": "string",
+          "enum": [
+            "All",
+            "Users",
+            "Groups",
+            "Robots",
+            "ExternalApplications"
+          ],
+          "x-ms-enum": {
+            "name": "SearchContext",
+            "modelAsString": false
+          }
+        },
+        {
+          "in": "query",
+          "name": "domain",
+          "description": "",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "prefix",
+          "description": "",
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/DirectoryObjectDto"
+            }
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/DirectoryService"
+}

@@ -1,0 +1,51 @@
+{
+  "path": "/odata/Processes/UiPath.Server.Configuration.OData.GetArguments(key='{key}')",
+  "operations": {
+    "get": {
+      "tags": [
+        "Processes"
+      ],
+      "summary": "Get process parameters",
+      "description": "OAuth required scopes: OR.Execution or OR.Execution.Read.\r\n\r\nRequired permissions: Packages.View.",
+      "operationId": "Processes_GetArgumentsByKey",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "path",
+          "name": "key",
+          "description": "",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/ArgumentMetadata"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Processes"
+}

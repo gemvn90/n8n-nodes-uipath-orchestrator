@@ -1,0 +1,33 @@
+{
+  "path": "/api/DirectoryService/GetDomains",
+  "operations": {
+    "get": {
+      "tags": [
+        "DirectoryService"
+      ],
+      "summary": "Gets domains",
+      "description": "OAuth required scopes: OR.Users or OR.Users.Read.\r\n\r\nRequired permissions: Users.View or Units.Edit or SubFolders.Edit.",
+      "operationId": "DirectoryService_GetDomains",
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/DomainDto"
+            }
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/DirectoryService"
+}

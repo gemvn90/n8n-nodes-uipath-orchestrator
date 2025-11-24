@@ -1,0 +1,90 @@
+{
+  "path": "/odata/Folders/UiPath.Server.Configuration.OData.GetSubfoldersWithAssignedMachine",
+  "operations": {
+    "get": {
+      "tags": [
+        "Folders"
+      ],
+      "summary": "Gets direct machine assignments for all subfolders of the specific folder",
+      "description": "OAuth required scopes: OR.Folders or OR.Folders.Read.\r\n\r\nRequired permissions: (Units.View or SubFolders.View - Gets the subfolders in which the machines is directly assigned for any folder or for subfolders only).",
+      "operationId": "Folders_GetSubfoldersWithAssignedMachine",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "rootFolderId",
+          "description": "",
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "in": "query",
+          "name": "machineId",
+          "description": "",
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "in": "query",
+          "name": "$expand",
+          "description": "Indicates the related entities to be represented inline. The maximum depth is 2.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$filter",
+          "description": "Restricts the set of items returned. The maximum number of expressions is 100.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$select",
+          "description": "Limits the properties returned in the result.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$orderby",
+          "description": "Specifies the order in which items are returned. The maximum number of expressions is 5.",
+          "type": "string"
+        },
+        {
+          "in": "query",
+          "name": "$top",
+          "description": "Limits the number of items returned from a collection. The maximum value is 1000.",
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "in": "query",
+          "name": "$skip",
+          "description": "Excludes the specified number of items of the queried collection from the result.",
+          "type": "integer",
+          "format": "int32"
+        },
+        {
+          "in": "query",
+          "name": "$count",
+          "description": "Indicates whether the total count of items within a collection are returned in the result.",
+          "type": "boolean"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Success",
+          "schema": {
+            "$ref": "#/definitions/ODataValueOfIEnumerableOfFolderDto"
+          }
+        }
+      },
+      "security": [
+        {
+          "OAuth2": []
+        }
+      ]
+    }
+  },
+  "documentationLink": "https://desktop-e3pmat2/swagger/index.html#/Folders"
+}
