@@ -62,11 +62,35 @@ export async function executeJobsOperations(
 			startInfo,
 		};
 
+		const qs: IDataObject = {};
+		const headers: IDataObject = {};
+		
+		// Handle optional OData query parameters
+		const expand = this.getNodeParameter('$expand', i, '') as string;
+		const filter = this.getNodeParameter('$filter', i, '') as string;
+		const select = this.getNodeParameter('$select', i, '') as string;
+		const orderby = this.getNodeParameter('$orderby', i, '') as string;
+		const count = this.getNodeParameter('$count', i, false) as boolean;
+		
+		if (expand) qs.$expand = expand;
+		if (filter) qs.$filter = filter;
+		if (select) qs.$select = select;
+		if (orderby) qs.$orderby = orderby;
+		if (count) qs.$count = count;
+
+		// Handle organization unit header
+		const organizationUnitId = this.getNodeParameter('organizationUnitId', i, 0) as number;
+		if (organizationUnitId) {
+			headers['X-UIPATH-OrganizationUnitId'] = organizationUnitId.toString();
+		}
+
 		responseData = await uiPathApiRequest.call(
 			this,
 			'POST',
 			'/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs',
 			body,
+			qs,
+			headers,
 		);
 		responseData = responseData.value || responseData;
 	} else if (operation === 'stopJobs') {

@@ -10,10 +10,10 @@ export async function executeQueuesOperations(
 	let responseData;
 
 	if (operation === 'addQueueItem') {
-		const queueName = this.getNodeParameter('queueName', i) as string;
+		const Name = this.getNodeParameter('Name', i, '') as string;
 
-		if (!queueName || queueName.trim() === '') {
-			throw new NodeOperationError(this.getNode(), 'Queue name is required');
+		if (!Name.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Name (queue name) is required');
 		}
 
 		const itemDataStr = this.getNodeParameter('itemData', i) as string;
@@ -33,21 +33,35 @@ export async function executeQueuesOperations(
 			);
 		}
 
-		if (priority) {
-			itemData.Priority = priority;
+		// Build itemData according to QueueItemDataDto schema
+		const queueItemData: IDataObject = {
+			Name: Name,
+			SpecificContent: itemData.SpecificContent || {},
+		};
+
+		// Add optional properties with proper validation
+		if (priority) queueItemData.Priority = priority;
+		if (reference) {
+			if (reference.length > 128) {
+				throw new NodeOperationError(this.getNode(), 'Reference must be 128 characters or less');
+			}
+			queueItemData.Reference = reference;
 		}
+		if (dueDate) queueItemData.DueDate = dueDate;
+		
+		// Preserve other custom properties from JSON input
+		Object.assign(queueItemData, itemData);
 
 		const body: IDataObject = {
-			queueName,
-			itemData,
+			itemData: queueItemData
 		};
 
 		if (reference) {
-			body.reference = reference;
+			itemData.Reference = reference;
 		}
 
 		if (dueDate) {
-			body.dueDate = dueDate;
+			itemData.DueDate = dueDate;
 		}
 
 		responseData = await uiPathApiRequest.call(
@@ -59,12 +73,22 @@ export async function executeQueuesOperations(
 		responseData = responseData.value[0]; // Extract first item from OData array
 	} else if (operation === 'bulkAddQueueItems') {
 		const queueName = this.getNodeParameter('queueName', i) as string;
+		const commitType = this.getNodeParameter('commitType', i, 'AllOrNothing') as string;
 		const bulkItemsStr = this.getNodeParameter('bulkItemsJson', i) as string;
 
-		let bulkItemsJson = [];
+		// Validate commitType against enum values
+		const validCommitTypes = new Set(['AllOrNothing', 'StopOnFirstFailure', 'ProcessAllIndependently']);
+		if (!validCommitTypes.has(commitType)) {
+			throw new NodeOperationError(
+				this.getNode(),
+				`Invalid commitType: ${commitType}. Valid values are AllOrNothing, StopOnFirstFailure, ProcessAllIndependently`
+			);
+		}
+
+		let items = [];
 		try {
-			bulkItemsJson = JSON.parse(bulkItemsStr);
-			if (!Array.isArray(bulkItemsJson)) {
+			items = JSON.parse(bulkItemsStr);
+			if (!Array.isArray(items)) {
 				throw new Error('Bulk items must be an array');
 			}
 		} catch (error) {
@@ -74,9 +98,32 @@ export async function executeQueuesOperations(
 			);
 		}
 
+		// Validate and format each item according to QueueItemDataDto
+		const queueItems = items.map((item: IDataObject) => {
+			const queueItem: IDataObject = {
+				Name: queueName,
+				SpecificContent: item.SpecificContent || {},
+			};
+
+			if (item.Priority) queueItem.Priority = item.Priority;
+			if (item.Reference) {
+				if (item.Reference.toString().length > 128) {
+					throw new NodeOperationError(this.getNode(), 'Reference must be 128 characters or less');
+				}
+				queueItem.Reference = item.Reference;
+			}
+			if (item.DueDate) queueItem.DueDate = item.DueDate;
+			if (item.DeferDate) queueItem.DeferDate = item.DeferDate;
+			if (item.RiskSlaDate) queueItem.RiskSlaDate = item.RiskSlaDate;
+			if (item.Progress) queueItem.Progress = item.Progress;
+
+			return queueItem;
+		});
+
 		const body: IDataObject = {
 			queueName,
-			bulkItemsJson,
+			commitType,
+			queueItems,
 		};
 
 		responseData = await uiPathApiRequest.call(
@@ -85,6 +132,7 @@ export async function executeQueuesOperations(
 			'/odata/Queues/UiPathODataSvc.BulkAddQueueItems',
 			body,
 		);
+		responseData = responseData.value; // Handle OData response format
 	} else if (operation === 'getQueueItems') {
 		const filter = this.getNodeParameter('filter', i) as string;
 		const top = this.getNodeParameter('top', i) as number;
