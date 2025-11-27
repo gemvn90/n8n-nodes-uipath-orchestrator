@@ -79,6 +79,18 @@ export const queuesOperations: INodeProperties[] = [
 				action: 'Get queue item event history',
 			},
 			{
+				name: 'Get Item Last Retry',
+				value: 'getItemLastRetry',
+				description: 'Get the last retry information for a queue item',
+				action: 'Get item last retry',
+			},
+			{
+				name: 'Get Item Processing History',
+				value: 'getItemProcessingHistory',
+				description: 'Get complete processing history for a queue item',
+				action: 'Get item processing history',
+			},
+			{
 				name: 'Get Queue Items',
 				value: 'getQueueItems',
 				description: 'Get all queue items with filtering',
@@ -140,7 +152,7 @@ export const queuesFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['queues'],
-				operation: ['addQueueItem', 'startTransaction', 'bulkAddQueueItems'],
+				operation: ['startTransaction', 'bulkAddQueueItems'],
 			},
 		},
 		required: true,
@@ -148,6 +160,20 @@ export const queuesFields: INodeProperties[] = [
 		description: 'The name of the queue or queue definition ID',
 	},
 	// AddQueueItem operation fields
+	{
+		displayName: 'Queue Name',
+		name: 'Name',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['queues'],
+				operation: ['addQueueItem'],
+			},
+		},
+		required: true,
+		default: '',
+		description: 'The name of the queue to add the item to',
+	},
 	{
 		displayName: 'Item Data',
 		name: 'itemData',
@@ -160,7 +186,7 @@ export const queuesFields: INodeProperties[] = [
 		},
 		required: true,
 		default: '{}',
-		description: 'Queue item specific content as JSON (e.g., {"Name": "John", "ID": 123})',
+		description: 'Queue item specific content as JSON (e.g., {"SpecificContent": {"Name": "John", "ID": 123}})',
 	},
 	{
 		displayName: 'Priority',
@@ -217,6 +243,33 @@ export const queuesFields: INodeProperties[] = [
 	},
 	// BulkAddQueueItems operation fields
 	{
+		displayName: 'Commit Type',
+		name: 'commitType',
+		type: 'options',
+		displayOptions: {
+			show: {
+				resource: ['queues'],
+				operation: ['bulkAddQueueItems'],
+			},
+		},
+		options: [
+			{
+				name: 'All Or Nothing',
+				value: 'AllOrNothing',
+			},
+			{
+				name: 'Stop On First Failure',
+				value: 'StopOnFirstFailure',
+			},
+			{
+				name: 'Process All Independently',
+				value: 'ProcessAllIndependently',
+			},
+		],
+		default: 'AllOrNothing',
+		description: 'How to handle batch commit - all together, stop on error, or process each independently',
+	},
+	{
 		displayName: 'Bulk Items JSON',
 		name: 'bulkItemsJson',
 		type: 'string',
@@ -228,7 +281,7 @@ export const queuesFields: INodeProperties[] = [
 		},
 		required: true,
 		default: '[]',
-		description: 'Array of items as JSON: [{"reference":"REF1","priority":"High","itemData":{...}},...]',
+		description: 'Array of items as JSON: [{"SpecificContent":{"data":"value"},"Priority":"High","Reference":"REF1"},...]',
 	},
 	// GetQueueItems operation fields
 	{
@@ -238,7 +291,7 @@ export const queuesFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['queues'],
-				operation: ['getQueueItems'],
+				operation: ['getQueueItems', 'getQueueItemComments', 'getQueueItemCommentHistory', 'getQueueItemEvents', 'getQueueItemEventHistory'],
 			},
 		},
 		default: '',
@@ -251,7 +304,7 @@ export const queuesFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['queues'],
-				operation: ['getQueueItems'],
+				operation: ['getQueueItems', 'getQueueItemComments', 'getQueueItemCommentHistory', 'getQueueItemEvents', 'getQueueItemEventHistory'],
 			},
 		},
 		default: 10,
@@ -264,13 +317,13 @@ export const queuesFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['queues'],
-				operation: ['getQueueItems'],
+				operation: ['getQueueItems', 'getQueueItemComments', 'getQueueItemEvents'],
 			},
 		},
 		default: 0,
 		description: 'Number of items to skip',
 	},
-	// GetQueueItem/DeleteQueueItem operation fields
+	// Queue Item ID fields (numeric)
 	{
 		displayName: 'Queue Item ID',
 		name: 'queueItemId',
@@ -278,12 +331,12 @@ export const queuesFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['queues'],
-				operation: ['getQueueItem', 'deleteQueueItem', 'setTransactionProgress'],
+				operation: ['setTransactionProgress', 'setTransactionResult'],
 			},
 		},
 		required: true,
 		default: 0,
-		description: 'The ID of the queue item',
+		description: 'The numeric ID of the queue item',
 	},
 	// UpdateQueueItem operation fields
 	{
@@ -447,7 +500,7 @@ export const queuesFields: INodeProperties[] = [
 		default: '{}',
 		description: 'Output data as JSON object',
 	},
-	// UpdateQueueItem operation fields
+	// Queue Item Key fields (GUID)
 	{
 		displayName: 'Queue Item Key',
 		name: 'queueItemKey',
@@ -455,7 +508,7 @@ export const queuesFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['queues'],
-				operation: ['updateQueueItem', 'getQueueItem', 'deleteQueueItem'],
+				operation: ['updateQueueItem', 'getQueueItem', 'deleteQueueItem', 'getItemLastRetry', 'getItemProcessingHistory'],
 			},
 		},
 		required: true,
@@ -738,5 +791,49 @@ export const queuesFields: INodeProperties[] = [
 		default: 'CreatedDate desc',
 		placeholder: 'CreatedDate desc',
 		description: 'Sort order for events',
+	},
+	// Get Item Last Retry fields
+	{
+		displayName: 'Expand',
+		name: '$expand',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['queues'],
+				operation: ['getItemLastRetry'],
+			},
+		},
+		default: '',
+		placeholder: 'ErrorDetails',
+		description: 'Expand related entities',
+	},
+	{
+		displayName: 'Select',
+		name: '$select',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['queues'],
+				operation: ['getItemLastRetry'],
+			},
+		},
+		default: '',
+		placeholder: 'RetryNumber,Status,ErrorMessage,StartTime,EndTime',
+		description: 'Select specific properties to return',
+	},
+	// Get Item Processing History fields - additional parameters beyond the Queue Item Key defined above
+	{
+		displayName: 'Select',
+		name: 'select',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['queues'],
+				operation: ['getItemProcessingHistory'],
+			},
+		},
+		default: '',
+		placeholder: 'Event,CreatedDate,Status,RobotName',
+		description: 'Select specific properties to return',
 	},
 ];

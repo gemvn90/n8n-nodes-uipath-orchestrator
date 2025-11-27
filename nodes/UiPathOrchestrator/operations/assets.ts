@@ -2,6 +2,30 @@ import { IExecuteFunctions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 import { uiPathApiRequest } from '../GenericFunctions';
 
+// Helper function to validate expand depth
+function validateExpandDepth(expand: string, maxDepth: number = 2): void {
+	if (!expand) return;
+	
+	// Count parenthesis nesting depth
+	let depth = 0;
+	let maxDepthFound = 0;
+	for (const char of expand) {
+		if (char === '(') {
+			depth++;
+			maxDepthFound = Math.max(maxDepthFound, depth);
+		} else if (char === ')') {
+			depth--;
+		}
+	}
+	
+	if (maxDepthFound > maxDepth) {
+		throw new NodeOperationError(
+			null as any,
+			`Expand cannot have depth greater than ${maxDepth}`
+		);
+	}
+}
+
 export async function executeAssetsOperations(
 	this: IExecuteFunctions,
 	i: number,
@@ -106,10 +130,8 @@ export async function executeAssetsOperations(
 		if (select) queryParams.push(`$select=${select}`);
 		if (top && top > 0) queryParams.push(`$top=${Math.min(top, 1000)}`);
 		if (expand) {
-			const expandDepth = expand.split(',').length;
-			if (expandDepth > 2) {
-				throw new NodeOperationError(this.getNode(), 'Expand cannot have depth greater than 2');
-			}
+			// Fix: Validate actual nesting depth, not comma count
+			validateExpandDepth(expand, 2);
 			queryParams.push(`$expand=${expand}`);
 		}
 		if (orderby) queryParams.push(`$orderby=${orderby}`);
@@ -138,10 +160,8 @@ export async function executeAssetsOperations(
 		if (filter) queryParams.push(`$filter=${encodeURIComponent(filter)}`);
 		if (select) queryParams.push(`$select=${select}`);
 		if (expand) {
-			const expandDepth = expand.split(',').length;
-			if (expandDepth > 2) {
-				throw new NodeOperationError(this.getNode(), 'Expand cannot have depth greater than 2');
-			}
+			// Fix: Validate actual nesting depth, not comma count
+			validateExpandDepth(expand, 2);
 			queryParams.push(`$expand=${expand}`);
 		}
 		if (orderby) queryParams.push(`$orderby=${orderby}`);
@@ -149,8 +169,9 @@ export async function executeAssetsOperations(
 		if (skip && skip > 0) queryParams.push(`$skip=${skip}`);
 		if (count) queryParams.push(`$count=true`);
 		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
-		const headers = organizationUnitId ? { 'X-UIPATH-OrganizationUnitId': organizationUnitId } : {};
-		responseData = await uiPathApiRequest.call(this, 'GET', url, {}, headers);
+		const headers = organizationUnitId ? { 'X-UIPATH-OrganizationUnitId': organizationUnitId.toString() } : {};
+		// Fix: Correct parameter order (method, endpoint, body, qs, headers)
+		responseData = await uiPathApiRequest.call(this, 'GET', url, {}, {}, headers);
 		responseData = responseData.value || responseData;
 	}
 
@@ -164,6 +185,15 @@ export async function executeAssetsOperations(
 		}
 		if (!valueType) {
 			throw new NodeOperationError(this.getNode(), 'Value type is required');
+		}
+		
+		// Add value type validation
+		const validValueTypes = ['Text', 'Bool', 'Integer', 'Credential', 'WindowsCredential', 'KeyValueList', 'DBConnectionString'];
+		if (!validValueTypes.includes(valueType)) {
+			throw new NodeOperationError(
+				this.getNode(),
+				`Invalid value type: ${valueType}. Valid types are: ${validValueTypes.join(', ')}`
+			);
 		}
 
 		const value = this.getNodeParameter('value', i) as string;

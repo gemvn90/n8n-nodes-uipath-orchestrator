@@ -164,21 +164,137 @@ export async function executeFoldersOperations(
 			'/odata/Folders/UiPath.Server.Configuration.OData.ToggleFolderMachineInherit',
 			body,
 		);
+	} else if (operation === 'create') {
+		const displayName = this.getNodeParameter('displayName', i) as string;
+		const description = this.getNodeParameter('description', i, '') as string;
+		const parentId = this.getNodeParameter('parentId', i, null) as number | null;
+		const provisionType = this.getNodeParameter('provisionType', i, 0) as number;
+		
+		if (!displayName || !displayName.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Display name is required');
+		}
+		
+		const body: IDataObject = {
+			DisplayName: displayName,
+			ProvisionType: provisionType,
+		};
+		if (description) body.Description = description;
+		if (parentId !== null && parentId > 0) body.ParentId = parentId;
+		
+		responseData = await uiPathApiRequest.call(this, 'POST', '/odata/Folders', body);
 	} else if (operation === 'update') {
 		const key = this.getNodeParameter('key', i) as string;
 		const name = this.getNodeParameter('name', i) as string;
-		const description = this.getNodeParameter('description', i) as string;
-		const body = {
-			key,
-			displayName: name,
-			description,
+		const description = this.getNodeParameter('description', i, '') as string;
+		
+		if (!key) {
+			throw new NodeOperationError(this.getNode(), 'Folder key is required');
+		}
+		
+		// Fix: Use PUT instead of PATCH and don't include key in body
+		const body: IDataObject = {
+			DisplayName: name,
 		};
+		if (description) body.Description = description;
+		
 		responseData = await uiPathApiRequest.call(
 			this,
-			'PATCH',
-			`/odata/Folders(key='${key}')`,
+			'PUT',
+			`/odata/Folders('${key}')`,
 			body,
 		);
+	} else if (operation === 'moveFolder') {
+		const folderId = this.getNodeParameter('folderId', i) as number;
+		const targetParentId = this.getNodeParameter('targetParentId', i) as number;
+		
+		if (!folderId || folderId <= 0) {
+			throw new NodeOperationError(this.getNode(), 'Valid folder ID is required');
+		}
+		if (targetParentId === undefined || targetParentId === null) {
+			throw new NodeOperationError(this.getNode(), 'Target parent ID is required');
+		}
+		
+		responseData = await uiPathApiRequest.call(
+			this,
+			'PUT',
+			`/odata/Folders(${folderId})/UiPath.Server.Configuration.OData.MoveFolder?targetParentId=${targetParentId}`,
+		);
+		
+		// Return success response
+		responseData = responseData || {
+			success: true,
+			message: 'Folder moved successfully',
+			folderId,
+			targetParentId
+		};
+	} else if (operation === 'removeMachinesFromFolder') {
+		const key = this.getNodeParameter('key', i) as string;
+		const machineIdsStr = this.getNodeParameter('machineIds', i) as string;
+		
+		if (!key) {
+			throw new NodeOperationError(this.getNode(), 'Folder key is required');
+		}
+		
+		let machineIds = [];
+		try {
+			machineIds = JSON.parse(machineIdsStr || '[]');
+			if (!Array.isArray(machineIds)) {
+				throw new Error('Machine IDs must be an array');
+			}
+		} catch {
+			// Try parsing as comma-separated string
+			machineIds = machineIdsStr.split(',').map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id));
+		}
+		
+		if (machineIds.length === 0) {
+			throw new NodeOperationError(this.getNode(), 'At least one machine ID is required');
+		}
+		
+		const body = {
+			machineIds,
+		};
+		
+		responseData = await uiPathApiRequest.call(
+			this,
+			'POST',
+			`/odata/Folders('${key}')/UiPath.Server.Configuration.OData.RemoveMachinesFromFolder`,
+			body,
+		);
+		
+		// Return success response
+		responseData = responseData || {
+			success: true,
+			message: `${machineIds.length} machine(s) removed from folder`,
+			machineIds
+		};
+	} else if (operation === 'removeUserFromFolder') {
+		const key = this.getNodeParameter('key', i) as string;
+		const userId = this.getNodeParameter('userId', i) as number;
+		
+		if (!key) {
+			throw new NodeOperationError(this.getNode(), 'Folder key is required');
+		}
+		if (!userId || userId <= 0) {
+			throw new NodeOperationError(this.getNode(), 'Valid user ID is required');
+		}
+		
+		const body = {
+			userId,
+		};
+		
+		responseData = await uiPathApiRequest.call(
+			this,
+			'POST',
+			`/odata/Folders('${key}')/UiPath.Server.Configuration.OData.RemoveUserFromFolder`,
+			body,
+		);
+		
+		// Return success response
+		responseData = responseData || {
+			success: true,
+			message: 'User removed from folder',
+			userId
+		};
 	} else if (operation === 'updateMachinesToFolderAssociations') {
 		const folderId = this.getNodeParameter('folderId', i) as number;
 		const machineIdsToAddStr = this.getNodeParameter('machineIdsToAdd', i) as string;

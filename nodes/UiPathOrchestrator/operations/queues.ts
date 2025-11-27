@@ -487,12 +487,54 @@ export async function executeQueuesOperations(
 			transactionResult,
 		};
 
+		// Fix: Use QueueItems entity instead of Queues
 		responseData = await uiPathApiRequest.call(
 			this,
 			'POST',
-			`/odata/Queues(${queueItemId})/UiPathODataSvc.SetTransactionResult`,
+			`/odata/QueueItems(${queueItemId})/UiPathODataSvc.SetTransactionResult`,
 			body,
 		);
+	} else if (operation === 'getItemLastRetry') {
+		const queueItemKey = this.getNodeParameter('queueItemKey', i) as string;
+		
+		if (!queueItemKey) {
+			throw new NodeOperationError(this.getNode(), 'Queue item key is required');
+		}
+		
+		const expand = this.getNodeParameter('$expand', i, '') as string;
+		const select = this.getNodeParameter('$select', i, '') as string;
+		
+		let url = `/odata/QueueItems('${queueItemKey}')/UiPath.Server.Configuration.OData.GetItemLastRetry`;
+		const queryParams: string[] = [];
+		if (expand) queryParams.push(`$expand=${expand}`);
+		if (select) queryParams.push(`$select=${select}`);
+		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
+		
+		responseData = await uiPathApiRequest.call(this, 'GET', url);
+	} else if (operation === 'getItemProcessingHistory') {
+		const queueItemKey = this.getNodeParameter('queueItemKey', i) as string;
+		
+		if (!queueItemKey) {
+			throw new NodeOperationError(this.getNode(), 'Queue item key is required');
+		}
+		
+		const filter = this.getNodeParameter('filter', i, '') as string;
+		const orderby = this.getNodeParameter('orderby', i, '') as string;
+		const top = this.getNodeParameter('top', i, 0) as number;
+		const skip = this.getNodeParameter('skip', i, 0) as number;
+		const select = this.getNodeParameter('select', i, '') as string;
+		
+		let url = `/odata/QueueItems('${queueItemKey}')/UiPathODataSvc.GetItemProcessingHistory`;
+		const queryParams: string[] = [];
+		if (filter) queryParams.push(`$filter=${encodeURIComponent(filter)}`);
+		if (orderby) queryParams.push(`$orderby=${orderby}`);
+		if (top > 0) queryParams.push(`$top=${top}`);
+		if (skip > 0) queryParams.push(`$skip=${skip}`);
+		if (select) queryParams.push(`$select=${select}`);
+		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
+		
+		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		responseData = responseData.value || responseData;
 	}
 
 	return responseData;

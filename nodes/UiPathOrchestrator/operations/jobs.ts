@@ -116,11 +116,13 @@ export async function executeJobsOperations(
 			'X-UIPATH-OrganizationUnitId': organizationUnitId.toString(),
 		};
 
+		// Fix: Correct parameter order (method, endpoint, body, qs, headers)
 		responseData = await uiPathApiRequest.call(
 			this,
 			'POST',
 			'/odata/Jobs/UiPath.Server.Configuration.OData.StopJobs',
 			body,
+			{},
 			headers,
 		);
 	} else if (operation === 'restartJob') {
@@ -211,8 +213,8 @@ export async function executeJobsOperations(
 		const jobId = this.getNodeParameter('jobId', i) as number;
 		const stopStrategy = this.getNodeParameter('stopStrategy', i) as string;
 
+		// Fix: Don't include jobId in body since it's in the URL
 		const body = {
-			jobId: jobId,
 			strategy: stopStrategy,
 		};
 
@@ -225,6 +227,11 @@ export async function executeJobsOperations(
 	} else if (operation === 'validateExistingJob') {
 		const jobId = this.getNodeParameter('jobId', i) as number;
 		const inputArgumentsStr = this.getNodeParameter('inputArguments', i) as string;
+
+		// Add validation for jobId
+		if (!jobId || jobId <= 0) {
+			throw new NodeOperationError(this.getNode(), 'Valid Job ID is required');
+		}
 
 		let inputArguments = {};
 		try {

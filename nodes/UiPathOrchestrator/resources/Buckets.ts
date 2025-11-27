@@ -25,10 +25,22 @@ export const bucketsOperations: INodeProperties[] = [
 				action: 'Get buckets',
 			},
 			{
+				name: 'Get Buckets Across Folders',
+				value: 'getBucketsAcrossFolders',
+				description: 'List buckets from all accessible folders',
+				action: 'Get buckets across folders',
+			},
+			{
 				name: 'Get Bucket',
 				value: 'getBucket',
 				description: 'Get bucket details by ID',
 				action: 'Get bucket',
+			},
+			{
+				name: 'Get Folders For Bucket',
+				value: 'getFoldersForBucket',
+				description: 'Get folders that have access to a bucket',
+				action: 'Get folders for bucket',
 			},
 			{
 				name: 'Update Bucket',
@@ -90,7 +102,7 @@ export const bucketsOperations: INodeProperties[] = [
 ];
 
 export const bucketsFields: INodeProperties[] = [
-	// GetBuckets operation fields
+	// GetBuckets and GetBucketsAcrossFolders operation fields
 	{
 	 	displayName: 'Filter',
 	 	name: 'filter',
@@ -98,7 +110,7 @@ export const bucketsFields: INodeProperties[] = [
 	 	displayOptions: {
 	 		show: {
 	 			resource: ['buckets'],
-	 			operation: ['getBuckets'],
+	 			operation: ['getBuckets', 'getBucketsAcrossFolders'],
 	 		},
 	 	},
 	 	default: '',
@@ -111,7 +123,7 @@ export const bucketsFields: INodeProperties[] = [
 	 	displayOptions: {
 	 		show: {
 	 			resource: ['buckets'],
-	 			operation: ['getBuckets'],
+	 			operation: ['getBuckets', 'getBucketsAcrossFolders', 'getFoldersForBucket'],
 	 		},
 	 	},
 	 	default: '',
@@ -124,7 +136,7 @@ export const bucketsFields: INodeProperties[] = [
 	 	displayOptions: {
 	 		show: {
 	 			resource: ['buckets'],
-	 			operation: ['getBuckets'],
+	 			operation: ['getBuckets', 'getBucketsAcrossFolders'],
 	 		},
 	 	},
 	 	default: '',
@@ -137,7 +149,7 @@ export const bucketsFields: INodeProperties[] = [
 	 	displayOptions: {
 	 		show: {
 	 			resource: ['buckets'],
-	 			operation: ['getBuckets'],
+	 			operation: ['getBuckets', 'getBucketsAcrossFolders'],
 	 		},
 	 	},
 	 	default: 0,
@@ -150,7 +162,7 @@ export const bucketsFields: INodeProperties[] = [
 	 	displayOptions: {
 	 		show: {
 	 			resource: ['buckets'],
-	 			operation: ['getBuckets'],
+	 			operation: ['getBuckets', 'getBucketsAcrossFolders'],
 	 		},
 	 	},
 	 	default: 0,
@@ -163,11 +175,55 @@ export const bucketsFields: INodeProperties[] = [
 	 	displayOptions: {
 	 		show: {
 	 			resource: ['buckets'],
-	 			operation: ['getBuckets'],
+	 			operation: ['getBuckets', 'getBucketsAcrossFolders'],
 	 		},
 	 	},
 	 	default: false,
 	 	description: 'Optional: Include total count in result',
+	},
+	
+	// GetBucketsAcrossFolders specific fields
+	{
+	 	displayName: 'Exclude Folder ID',
+	 	name: 'excludeFolderId',
+	 	type: 'string',
+	 	displayOptions: {
+	 		show: {
+	 			resource: ['buckets'],
+	 			operation: ['getBucketsAcrossFolders'],
+	 		},
+	 	},
+	 	default: '',
+	 	description: 'Optional: Folder ID to exclude from results',
+	},
+	
+	// GetFoldersForBucket specific fields
+	{
+	 	displayName: 'Bucket ID',
+	 	name: 'bucketId',
+	 	type: 'string',
+	 	displayOptions: {
+	 		show: {
+	 			resource: ['buckets'],
+	 			operation: ['getFoldersForBucket'],
+	 		},
+	 	},
+	 	default: '',
+	 	required: true,
+	 	description: 'The bucket ID to get folders for',
+	},
+	{
+	 	displayName: 'Expand',
+	 	name: 'expand',
+	 	type: 'string',
+	 	displayOptions: {
+	 		show: {
+	 			resource: ['buckets'],
+	 			operation: ['getFoldersForBucket'],
+	 		},
+	 	},
+	 	default: '',
+	 	description: 'Optional: Related entities to represent inline',
 	},
 
 	// CreateBucket operation fields
@@ -201,15 +257,33 @@ export const bucketsFields: INodeProperties[] = [
 	{
 	 	displayName: 'Bucket Type',
 	 	name: 'bucketType',
-	 	type: 'string',
+	 	type: 'options',
 	 	displayOptions: {
 	 		show: {
 	 			resource: ['buckets'],
 	 			operation: ['createBucket'],
 	 		},
 	 	},
-	 	default: '',
-	 	description: 'Optional: Bucket type identifier',
+	 	options: [
+	 		{
+	 			name: 'FileSystem',
+	 			value: 'FileSystem',
+	 		},
+	 		{
+	 			name: 'Azure Blob',
+	 			value: 'AzureBlob',
+	 		},
+	 		{
+	 			name: 'Amazon S3',
+	 			value: 'AmazonS3',
+	 		},
+	 		{
+	 			name: 'MinIO',
+	 			value: 'MinIO',
+	 		},
+	 	],
+	 	default: 'FileSystem',
+	 	description: 'Storage provider type for the bucket',
 	},
 	{
 	 	displayName: 'Is Active',
@@ -434,7 +508,8 @@ export const bucketsFields: INodeProperties[] = [
 	 	},
 	 	default: '',
 	 	required: true,
-	 	description: 'The file path within the bucket',
+	 	placeholder: '/folder/filename.txt',
+	 	description: 'The file path within the bucket (must start with /)',
 	},
 
 	// GetReadUri operation fields
@@ -477,7 +552,8 @@ export const bucketsFields: INodeProperties[] = [
 	 		},
 	 	},
 	 	default: '',
-	 	description: 'Optional: Content type for the upload (e.g., application/octet-stream)',
+	 	placeholder: 'application/octet-stream',
+	 	description: 'Optional: MIME type for the upload (e.g., application/json, text/plain, image/png)',
 	},
 	
 	// ShareToFolders operation fields

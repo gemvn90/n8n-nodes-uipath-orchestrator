@@ -33,7 +33,7 @@ export const processesOperations: INodeProperties[] = [
 			{
 				name: 'Get Arguments',
 				value: 'getArguments',
-				description: 'Get process parameters',
+				description: 'Get process input arguments metadata',
 				action: 'Get arguments',
 			},
 			{
@@ -43,10 +43,16 @@ export const processesOperations: INodeProperties[] = [
 				action: 'Get process versions',
 			},
 			{
+				name: 'Set Arguments',
+				value: 'setArguments',
+				description: 'Set or update process input arguments metadata',
+				action: 'Set arguments',
+			},
+			{
 				name: 'Upload Package',
 				value: 'uploadPackage',
-				description: 'Upload new process package or new version',
-				action: 'Upload package',
+				description: '⚠️ NOT IMPLEMENTED - Upload requires binary file handling',
+				action: 'Upload package (not implemented)',
 			},
 		],
 		default: 'getAll',
@@ -182,6 +188,37 @@ export const processesFields: INodeProperties[] = [
 		description: 'Optional: Limit properties returned in result',
 	},
 	
+	// SetArguments operation fields
+	{
+		displayName: 'Process Key',
+		name: 'processKeySetArgs',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['processes'],
+				operation: ['setArguments'],
+			},
+		},
+		default: '',
+		required: true,
+		description: 'The unique identifier of the process (release key)',
+	},
+	{
+		displayName: 'Arguments (JSON)',
+		name: 'arguments',
+		type: 'json',
+		displayOptions: {
+			show: {
+				resource: ['processes'],
+				operation: ['setArguments'],
+			},
+		},
+		default: '{\n  "parameterName": {\n    "type": "String",\n    "required": true,\n    "hasDefault": false\n  }\n}',
+		required: true,
+		description: 'JSON object defining input arguments with metadata (type, required, hasDefault, defaultValue)',
+		placeholder: '{"inputFile": {"type": "String", "required": true}, "timeout": {"type": "Int32", "hasDefault": true, "defaultValue": 30}}',
+	},
+	
 	// GetProcessVersions operation fields
 	{
 		displayName: 'Process ID',
@@ -302,20 +339,18 @@ export const processesFields: INodeProperties[] = [
 		description: 'Optional: Include total count in result',
 	},
 	
-	// UploadPackage operation fields
+	// UploadPackage operation fields (NOT IMPLEMENTED)
 	{
-		displayName: 'Package File',
-		name: 'packageFile',
-		type: 'string',
+		displayName: 'Notice',
+		name: 'uploadNotice',
+		type: 'notice',
+		default: '',
 		displayOptions: {
 			show: {
 				resource: ['processes'],
 				operation: ['uploadPackage'],
 			},
 		},
-		default: '',
-		required: true,
-		description: 'Path to the .nupkg file to upload',
 	},
 	{
 		displayName: 'Feed ID',
@@ -328,71 +363,6 @@ export const processesFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Optional: The feed ID for package storage',
-	},
-	{
-		displayName: 'Expand',
-		name: 'expandUpload',
-		type: 'string',
-		displayOptions: {
-			show: {
-				resource: ['processes'],
-				operation: ['uploadPackage'],
-			},
-		},
-		default: '',
-		description: 'Optional: Related entities to represent inline',
-	},
-	{
-		displayName: 'Filter',
-		name: 'filterUpload',
-		type: 'string',
-		displayOptions: {
-			show: {
-				resource: ['processes'],
-				operation: ['uploadPackage'],
-			},
-		},
-		default: '',
-		description: 'Optional: Filter expressions',
-	},
-	{
-		displayName: 'Select',
-		name: 'selectUpload',
-		type: 'string',
-		displayOptions: {
-			show: {
-				resource: ['processes'],
-				operation: ['uploadPackage'],
-			},
-		},
-		default: '',
-		description: 'Optional: Limit properties returned',
-	},
-	{
-		displayName: 'Order By',
-		name: 'orderbyUpload',
-		type: 'string',
-		displayOptions: {
-			show: {
-				resource: ['processes'],
-				operation: ['uploadPackage'],
-			},
-		},
-		default: '',
-		description: 'Optional: Order expressions',
-	},
-	{
-		displayName: 'Count',
-		name: 'countUpload',
-		type: 'boolean',
-		displayOptions: {
-			show: {
-				resource: ['processes'],
-				operation: ['uploadPackage'],
-			},
-		},
-		default: false,
-		description: 'Optional: Include total count in result',
+		description: 'The feed ID for package storage (operation will fail - not implemented)',
 	},
 ];

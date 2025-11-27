@@ -15,6 +15,17 @@ export async function executeBucketsOperations(
 		const bucketType = this.getNodeParameter('bucketType', i) as string;
 		const isActive = this.getNodeParameter('isActive', i) as boolean;
 
+		// Validate bucket type
+		if (bucketType) {
+			const validBucketTypes = ['FileSystem', 'AzureBlob', 'AmazonS3', 'MinIO'];
+			if (!validBucketTypes.includes(bucketType)) {
+				throw new NodeOperationError(
+					this.getNode(),
+					`Invalid bucket type: ${bucketType}. Valid types are: ${validBucketTypes.join(', ')}`
+				);
+			}
+		}
+
 		const body: any = {
 			Name: name,
 		};
@@ -106,17 +117,35 @@ export async function executeBucketsOperations(
 	} else if (operation === 'getFile') {
 		const bucketId = this.getNodeParameter('bucketId', i) as string;
 		const path = this.getNodeParameter('path', i) as string;
+		
+		// Enhanced path validation
 		if (!path) {
 			throw new NodeOperationError(this.getNode(), 'Path is required');
 		}
+		if (path.includes('..')) {
+			throw new NodeOperationError(this.getNode(), 'Invalid path: directory traversal not allowed');
+		}
+		if (!path.startsWith('/')) {
+			throw new NodeOperationError(this.getNode(), 'Path must start with /');
+		}
+		
 		const url = `/odata/Buckets(${bucketId})/UiPath.Server.Configuration.OData.GetFile?path=${encodeURIComponent(path)}`;
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
 	} else if (operation === 'deleteFile') {
 		const bucketId = this.getNodeParameter('bucketId', i) as string;
 		const path = this.getNodeParameter('path', i) as string;
+		
+		// Enhanced path validation
 		if (!path) {
 			throw new NodeOperationError(this.getNode(), 'Path is required');
 		}
+		if (path.includes('..')) {
+			throw new NodeOperationError(this.getNode(), 'Invalid path: directory traversal not allowed');
+		}
+		if (!path.startsWith('/')) {
+			throw new NodeOperationError(this.getNode(), 'Path must start with /');
+		}
+		
 		const url = `/odata/Buckets(${bucketId})/UiPath.Server.Configuration.OData.DeleteFile?path=${encodeURIComponent(path)}`;
 		responseData = await uiPathApiRequest.call(this, 'DELETE', url);
 		responseData = { success: true, path };
@@ -130,7 +159,19 @@ export async function executeBucketsOperations(
 		const bucketId = this.getNodeParameter('bucketId', i) as string;
 		const path = this.getNodeParameter('path', i) as string;
 		const expiryInMinutes = this.getNodeParameter('expiryInMinutes', i) as number;
-		const contentType = this.getNodeParameter('contentType', i) as string;
+		const contentType = this.getNodeParameter('contentType', i, '') as string;
+		
+		// Validate content type format if provided
+		if (contentType) {
+			const mimeTypeRegex = /^[a-zA-Z0-9][a-zA-Z0-9!#$&^_+-]*(\/[a-zA-Z0-9][a-zA-Z0-9!#$&^_+.-]*)?$/;
+			if (!mimeTypeRegex.test(contentType)) {
+				throw new NodeOperationError(
+					this.getNode(),
+					`Invalid content type format: ${contentType}`
+				);
+			}
+		}
+		
 		let url = `/odata/Buckets(${bucketId})/UiPath.Server.Configuration.OData.GetWriteUri?path=${encodeURIComponent(path)}`;
 		if (expiryInMinutes) url += `&expiryInMinutes=${expiryInMinutes}`;
 		if (contentType) url += `&contentType=${encodeURIComponent(contentType)}`;
@@ -147,6 +188,11 @@ export async function executeBucketsOperations(
 			bucketIds = JSON.parse(bucketsJson || '[]');
 			folderIdsToAdd = JSON.parse(toAddFolderIds || '[]');
 			folderIdsToRemove = JSON.parse(toRemoveFolderIds || '[]');
+			
+			// Validate parsed values are arrays
+			if (!Array.isArray(bucketIds) || !Array.isArray(folderIdsToAdd) || !Array.isArray(folderIdsToRemove)) {
+				throw new Error('All parameters must be arrays');
+			}
 		} catch (error) {
 			throw new NodeOperationError(
 				this.getNode(),
@@ -159,12 +205,60 @@ export async function executeBucketsOperations(
 			toAddFolderIds: folderIdsToAdd,
 			toRemoveFolderIds: folderIdsToRemove,
 		};
-		responseData = await uiPathApiRequest.call(
+		
+		await uiPathApiRequest.call(
 			this,
 			'POST',
 			'/odata/Buckets/UiPath.Server.Configuration.OData.ShareToFolders',
 			body,
 		);
+		
+		// Provide explicit success response for 204 No Content
+		responseData = { 
+			success: true, 
+			bucketIds: body.bucketIds,
+			addedToFolders: body.toAddFolderIds,
+			removedFromFolders: body.toRemoveFolderIds
+		};
+	} else if (operation === 'getBucketsAcrossFolders') {
+		const excludeFolderId = this.getNodeParameter('excludeFolderId', i, '') as string;
+		const filter = this.getNodeParameter('filter', i, '') as string;
+		const select = this.getNodeParameter('select', i, '') as string;
+		const orderby = this.getNodeParameter('orderby', i, '') as string;
+		const top = this.getNodeParameter('top', i, 0) as number;
+		const skip = this.getNodeParameter('skip', i, 0) as number;
+		const count = this.getNodeParameter('count', i, false) as boolean;
+		
+		let url = '/odata/Buckets/UiPath.Server.Configuration.OData.GetBucketsAcrossFolders';
+		const queryParams: string[] = [];
+		if (excludeFolderId) queryParams.push(`excludeFolderId=${encodeURIComponent(excludeFolderId)}`);
+		if (filter) queryParams.push(`$filter=${encodeURIComponent(filter)}`);
+		if (select) queryParams.push(`$select=${select}`);
+		if (orderby) queryParams.push(`$orderby=${orderby}`);
+		if (top > 0) queryParams.push(`$top=${Math.min(top, 1000)}`);
+		if (skip > 0) queryParams.push(`$skip=${skip}`);
+		if (count) queryParams.push(`$count=true`);
+		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
+		
+		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		responseData = responseData.value || responseData;
+	} else if (operation === 'getFoldersForBucket') {
+		const bucketId = this.getNodeParameter('bucketId', i) as string;
+		const expand = this.getNodeParameter('expand', i, '') as string;
+		const select = this.getNodeParameter('select', i, '') as string;
+		
+		if (!bucketId) {
+			throw new NodeOperationError(this.getNode(), 'Bucket ID is required');
+		}
+		
+		let url = `/odata/Buckets/UiPath.Server.Configuration.OData.GetFoldersForBucket(id=${bucketId})`;
+		const queryParams: string[] = [];
+		if (expand) queryParams.push(`$expand=${expand}`);
+		if (select) queryParams.push(`$select=${select}`);
+		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
+		
+		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		responseData = responseData.value || responseData;
 	}
 
 	return responseData;

@@ -30,6 +30,8 @@ export async function executeSessionsOperations(
 		if (queryParams.length > 0) url += '?' + queryParams.join('&');
 
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		// Fix: Add OData response unwrapping
+		responseData = responseData.value || responseData;
 	} else if (operation === 'toggleDebugMode') {
 		const sessionId = this.getNodeParameter('sessionId', i) as string;
 		const enabled = this.getNodeParameter('enabled', i) as boolean;
@@ -83,6 +85,8 @@ export async function executeSessionsOperations(
 		if (queryParams.length > 0) url += '?' + queryParams.join('&');
 
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		// Fix: Add OData response unwrapping
+		responseData = responseData.value || responseData;
 	} else if (operation === 'getMachineSessionRuntimes') {
 		const runtimeType = this.getNodeParameter('runtimeType', i) as string;
 		const filter = this.getNodeParameter('filter', i) as string;
@@ -96,6 +100,8 @@ export async function executeSessionsOperations(
 		if (queryParams.length > 0) url += '?' + queryParams.join('&');
 
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		// Fix: Add OData response unwrapping
+		responseData = responseData.value || responseData;
 	} else if (operation === 'getMachineSessionRuntimesByFolderId') {
 		const folderId = this.getNodeParameter('folderId', i) as string;
 		const robotId = this.getNodeParameter('robotId', i) as string;
@@ -108,6 +114,8 @@ export async function executeSessionsOperations(
 		if (queryParams.length > 0) url += '?' + queryParams.join('&');
 
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		// Fix: Add OData response unwrapping
+		responseData = responseData.value || responseData;
 	} else if (operation === 'getMachineSessions') {
 		const machineId = this.getNodeParameter('machineId', i) as string;
 		const filter = this.getNodeParameter('filter', i) as string;
@@ -120,6 +128,8 @@ export async function executeSessionsOperations(
 		if (queryParams.length > 0) url += '?' + queryParams.join('&');
 
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		// Fix: Add OData response unwrapping
+		responseData = responseData.value || responseData;
 	} else if (operation === 'getUsernames') {
 		const filter = this.getNodeParameter('filter', i) as string;
 		const top = this.getNodeParameter('top', i) as number;
@@ -131,6 +141,8 @@ export async function executeSessionsOperations(
 		if (queryParams.length > 0) url += '?' + queryParams.join('&');
 
 		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		// Fix: Add OData response unwrapping
+		responseData = responseData.value || responseData;
 	} else if (operation === 'setMaintenanceMode') {
 		const hostName = this.getNodeParameter('hostName', i) as string;
 		const maintenanceMode = this.getNodeParameter('maintenanceMode', i) as boolean;

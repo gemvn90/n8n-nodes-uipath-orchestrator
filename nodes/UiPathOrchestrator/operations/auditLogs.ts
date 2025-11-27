@@ -37,8 +37,9 @@ export async function executeAuditLogsOperations(
 			headers['x-UIPATH-AuditedService'] = auditedService;
 		}
 
-		responseData = await uiPathApiRequest.call(this, 'GET', url, undefined, { headers });
-		responseData = responseData.value;
+		// Fix: Correct parameter order (method, endpoint, body, qs, headers)
+		responseData = await uiPathApiRequest.call(this, 'GET', url, {}, {}, headers);
+		responseData = responseData.value || responseData;
 	} else if (operation === 'export') {
 		const auditedService = this.getNodeParameter('auditedService', i) as string;
 		const filter = this.getNodeParameter('filter', i) as string;
@@ -57,7 +58,8 @@ export async function executeAuditLogsOperations(
 			headers['x-UIPATH-AuditedService'] = auditedService;
 		}
 
-		responseData = await uiPathApiRequest.call(this, 'POST', url, {}, { headers });
+		// Fix: Correct parameter order (method, endpoint, body, qs, headers)
+		responseData = await uiPathApiRequest.call(this, 'POST', url, {}, {}, headers);
 	} else if (operation === 'getDetails') {
 		const auditedService = this.getNodeParameter('auditedService', i) as string;
 		const auditLogId = this.getNodeParameter('auditLogId', i) as string;
@@ -76,7 +78,8 @@ export async function executeAuditLogsOperations(
 			headers['x-UIPATH-AuditedService'] = auditedService;
 		}
 
-		responseData = await uiPathApiRequest.call(this, 'GET', url, undefined, { headers });
+		// Fix: Correct parameter order (method, endpoint, body, qs, headers)
+		responseData = await uiPathApiRequest.call(this, 'GET', url, {}, {}, headers);
 	}
 
 	return responseData;

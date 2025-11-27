@@ -13,16 +13,16 @@ export const directoryServiceOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Get Directory Permissions',
-				value: 'getDirectoryPermissions',
-				description: 'Get directory permissions for a user',
-				action: 'Get directory permissions',
-			},
-			{
 				name: 'Get Domains',
 				value: 'getDomains',
 				description: 'Get list of available domains',
 				action: 'Get domains',
+			},
+			{
+				name: 'Get Directory Permissions',
+				value: 'getDirectoryPermissions',
+				description: 'Get available directory service permissions',
+				action: 'Get directory permissions',
 			},
 			{
 				name: 'Search Users and Groups',
@@ -36,21 +36,8 @@ export const directoryServiceOperations: INodeProperties[] = [
 ];
 
 export const directoryServiceFields: INodeProperties[] = [
-	// Get Directory Permissions fields
-	{
-		displayName: 'Username',
-		name: 'username',
-		type: 'string',
-		displayOptions: {
-			show: {
-				resource: ['directoryService'],
-				operation: ['getDirectoryPermissions'],
-			},
-		},
-		default: '',
-		required: true,
-		description: 'The username to get permissions for',
-	},
+	// Get Directory Permissions has no parameters - it returns all available permissions
+	
 	// Search Users and Groups fields
 	{
 		displayName: 'Search Context',
@@ -111,6 +98,7 @@ export const directoryServiceFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Prefix or search text to filter results',
+		description: 'Prefix or search text to filter results (minimum 3 characters)',
+		placeholder: 'john',
 	},
 ];

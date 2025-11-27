@@ -164,20 +164,17 @@ export async function executeRobotsOperations(
 		responseData = responseData.value;
 	} else if (operation === 'getFolderRobots') {
 		const folderId = this.getNodeParameter('folderId', i) as string;
-		const machineId = this.getNodeParameter('machineId', i) as string;
+		const machineId = this.getNodeParameter('machineId', i, '') as string;
 
-		const body: IDataObject = {
-			folderId,
-			machineId,
-		};
+		// Fix: GET requests should not have body, use query parameters instead
+		let url = `/odata/Robots/UiPath.Server.Configuration.OData.GetFolderRobots`;
+		const queryParams: string[] = [];
+		queryParams.push(`folderId=${folderId}`);
+		if (machineId) queryParams.push(`machineId=${machineId}`);
+		if (queryParams.length > 0) url += `?${queryParams.join('&')}`;
 
-		responseData = await uiPathApiRequest.call(
-			this,
-			'GET',
-			`/odata/Robots/UiPath.Server.Configuration.OData.GetFolderRobots`,
-			body,
-		);
-		responseData = responseData.value;
+		responseData = await uiPathApiRequest.call(this, 'GET', url);
+		responseData = responseData.value || responseData;
 	} else if (operation === 'getMachineNameMappings') {
 		responseData = await uiPathApiRequest.call(
 			this,

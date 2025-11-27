@@ -31,6 +31,12 @@ export const foldersOperations: INodeProperties[] = [
 				action: 'Assign users',
 			},
 			{
+				name: 'Create',
+				value: 'create',
+				description: 'Create a new folder',
+				action: 'Create a folder',
+			},
+			{
 				name: 'Delete',
 				value: 'delete',
 				description: 'Delete a folder',
@@ -77,6 +83,24 @@ export const foldersOperations: INodeProperties[] = [
 				value: 'getUsersForFolder',
 				description: 'Get users with access to folder',
 				action: 'Get users for folder',
+			},
+			{
+				name: 'Move Folder',
+				value: 'moveFolder',
+				description: 'Move a folder to a new parent',
+				action: 'Move a folder',
+			},
+			{
+				name: 'Remove Machines From Folder',
+				value: 'removeMachinesFromFolder',
+				description: 'Remove machine assignments from folder',
+				action: 'Remove machines from folder',
+			},
+			{
+				name: 'Remove User From Folder',
+				value: 'removeUserFromFolder',
+				description: 'Remove user assignment from folder',
+				action: 'Remove user from folder',
 			},
 			{
 				name: 'Toggle Folder Machine Inherit',
@@ -701,5 +725,151 @@ export const foldersFields: INodeProperties[] = [
 		},
 		default: '[]',
 		description: 'JSON array of machine IDs to remove',
+	},
+	// Create Folder fields
+	{
+		displayName: 'Display Name',
+		name: 'displayName',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['create'],
+			},
+		},
+		required: true,
+		default: '',
+		description: 'The display name for the new folder',
+	},
+	{
+		displayName: 'Description',
+		name: 'description',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['create'],
+			},
+		},
+		default: '',
+		description: 'Description of the folder',
+	},
+	{
+		displayName: 'Parent ID',
+		name: 'parentId',
+		type: 'number',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['create'],
+			},
+		},
+		default: null,
+		description: 'Parent folder ID (leave empty for root folder)',
+	},
+	{
+		displayName: 'Provision Type',
+		name: 'provisionType',
+		type: 'options',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['create'],
+			},
+		},
+		options: [
+			{ name: 'Manual', value: 0 },
+			{ name: 'Automatic', value: 1 },
+		],
+		default: 0,
+		description: 'Folder provision type',
+	},
+	// Move Folder fields
+	{
+		displayName: 'Folder ID',
+		name: 'folderId',
+		type: 'number',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['moveFolder'],
+			},
+		},
+		required: true,
+		default: 0,
+		description: 'ID of the folder to move',
+	},
+	{
+		displayName: 'Target Parent ID',
+		name: 'targetParentId',
+		type: 'number',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['moveFolder'],
+			},
+		},
+		required: true,
+		default: 0,
+		description: 'ID of the new parent folder',
+	},
+	// Remove Machines From Folder fields
+	{
+		displayName: 'Folder Key',
+		name: 'key',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['removeMachinesFromFolder'],
+			},
+		},
+		required: true,
+		default: '',
+		description: 'The unique key of the folder',
+	},
+	{
+		displayName: 'Machine IDs',
+		name: 'machineIds',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['removeMachinesFromFolder'],
+			},
+		},
+		required: true,
+		default: '',
+		placeholder: '[1,2,3] or 1,2,3',
+		description: 'Array of machine IDs (JSON array or comma-separated)',
+	},
+	// Remove User From Folder fields
+	{
+		displayName: 'Folder Key',
+		name: 'key',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['removeUserFromFolder'],
+			},
+		},
+		required: true,
+		default: '',
+		description: 'The unique key of the folder',
+	},
+	{
+		displayName: 'User ID',
+		name: 'userId',
+		type: 'number',
+		displayOptions: {
+			show: {
+				resource: ['folders'],
+				operation: ['removeUserFromFolder'],
+			},
+		},
+		required: true,
+		default: 0,
+		description: 'ID of the user to remove',
 	},
 ];
