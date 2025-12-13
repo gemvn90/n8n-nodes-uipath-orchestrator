@@ -27,3 +27,5 @@ QUEUES_PARAMETER_FIXES.md
 Requirement_user.md
 CUSTOM_API_QUICKSTART.md
 CUSTOM_API_CALL.md
+.github/agents/coder.agent.md
+.github/instructions/dev.instructions.md
